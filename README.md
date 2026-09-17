@@ -9,7 +9,7 @@ brute-force login attempts against an exposed VM in near real time.
 | Tool | Role |
 |---|---|
 | **Microsoft Sentinel** | Cloud-native SIEM — detection logic, workbooks, alerting |
-| **Microsoft Defender** portal | Unified security operations console |
+| **Microsoft Defender XDR portal** | Unified security operations console (Sentinel + XDR surfaces) |
 | **Log Analytics Workspace** | Log ingestion & KQL query engine |
 | **Azure Monitor Workbooks** | Custom attack-map visualization |
 | **KQL (Kusto Query Language)** | Detection query authoring, GeoIP enrichment |
@@ -18,6 +18,11 @@ brute-force login attempts against an exposed VM in near real time.
 | **Azure VNet** | Isolated network for the target VM |
 
 ## Architecture
+
+> **Note:** This lab was built and operated entirely through the unified
+> **Microsoft Defender XDR portal**, where Microsoft Sentinel now lives
+> alongside Defender for Endpoint, Identity, and Cloud Apps in a single
+> console — reflecting Microsoft's current converged SecOps architecture.
 
 ![Architecture Diagram](./architecture.png)
 
@@ -69,3 +74,19 @@ South Korea.
 - **GeoIP threat enrichment** patterns used in real SOC dashboards
 
 ## Repository Structure
+microsoft-sentinel-siem-lab/
+├── README.md
+├── architecture.png
+├── attack-map.png
+├── queries/
+│ └── failed-logon-geoip.kql
+└── workbook/
+└── attack-map-workbook.json
+
+
+## Next Steps
+
+- [ ] Sentinel analytics rule + alert on failure-count threshold
+- [ ] Automated response via Logic Apps (auto-block via NSG)
+- [ ] Extend to Microsoft Defender for Endpoint telemetry (DeviceLogonEvents)
+- [ ] Add MITRE ATT&CK mapping to the analytics rule
