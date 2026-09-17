@@ -32,4 +32,40 @@ brute-force login attempts against an exposed VM in near real time.
 4. Results render on a live **Sentinel workbook attack map**, showing attacker
    origin, volume, and location as it happens.
 
-## Detection Query (KQL
+## Detection Query (KQL — run in Microsoft Sentinel)
+
+```kql
+let GeoIPDB_FULL = _GetWatchlist("geoip");
+let WindowsEvents = SecurityEvent;
+WindowsEvents
+| where EventID == 4625
+| evaluate ipv4_lookup(GeoIPDB_FULL, IpAddress, network)
+| summarize FailureCount = count() by IpAddress, latitude, longitude, cityname, countryname
+| project FailureCount, AttackerIp = IpAddress, latitude, longitude,
+    city = cityname, country = countryname,
+    friendly_location = strcat(cityname, " (", countryname, ")")
+```
+
+Built and tested directly in Sentinel's Logs blade, then wired into a workbook
+`type: 3` KQL item with a `map` visualization for live geospatial display.
+
+## Result
+
+![Attack Map](./attack-map.png)
+
+Real inbound brute-force traffic captured and geolocated in **Microsoft Sentinel**
+within hours of deployment — sourced from Jacksonville, US and Jung-gu,
+South Korea.
+
+## Skills Demonstrated
+
+- **SIEM operations**: log ingestion, detection query design, workbook/dashboard
+  building in Microsoft Sentinel
+- **KQL**: joins, aggregation, watchlist-based enrichment (`ipv4_lookup`)
+- **Microsoft Defender / Sentinel workbook JSON schema**: authoring custom
+  visualizations via the Advanced Editor
+- **Network security fundamentals**: NSG rule design, controlled exposure for
+  attack-surface labs
+- **GeoIP threat enrichment** patterns used in real SOC dashboards
+
+## Repository Structure
